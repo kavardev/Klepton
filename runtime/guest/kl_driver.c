@@ -1157,16 +1157,21 @@ int kl_driver_lifecycle_begin(FILE *out) {
 // nativeRender is dropped after it, so the engine that was torn down is never
 // called again whatever the frame loop does next.
 //
-// Gun Club VR (x2285803881494677, build 410) is the one title it was run with,
-// on its sender's headset (fix 44, 2026-10-15; not run here): its in-game Exit
-// left its settings at their old values, since pause and teardown alone wrote
-// nothing, and with TBMPrefs.Save in front of them they were kept across a
-// restart. Default on for that title only, alongside KL_UNITY_QUIT_EXITS.
+// Gun Club VR (x2285803881494677, build 410) was the first title it was run
+// with, on its sender's headset (fix 44, 2026-10-15; not run here): its in-game
+// Exit left its settings at their old values, since pause and teardown alone
+// wrote nothing, and with TBMPrefs.Save in front of them they were kept across
+// a restart. MADiSON VR (x157074645514372, 1.0.1q3, Klepton #110; its sender's
+// headset) uses pause and teardown only: the preferences save is Gun Club's
+// (kl_mprobe_gunclub_save_preferences). Default on for those two titles,
+// alongside KL_UNITY_QUIT_EXITS.
 static int unity_quit_teardown(void) {
     static int v = -1;
     if (v < 0) {
         const char *t = kl_driver_target_name();
-        v = kl_env_on("KL_UNITY_QUIT_TEARDOWN", t && strcmp(t, "x2285803881494677") == 0);
+        v = kl_env_on("KL_UNITY_QUIT_TEARDOWN", t &&
+                      (strcmp(t, "x2285803881494677") == 0 ||
+                       strcmp(t, "x157074645514372") == 0));
     }
     return v;
 }
